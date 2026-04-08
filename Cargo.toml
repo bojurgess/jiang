@@ -2,7 +2,10 @@
 name = "colorquant"
 version = "0.1.0"
 authors = ["Joe Burgess <bojurgess@gmail.com>"]
-edition = "2018"
+edition = "2024"
+description = "A colour quantisation library"
+license = "MIT"
+repository = "https://github.com/bojurgess/colorquant"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

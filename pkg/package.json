@@ -1,0 +1,27 @@
+{
+	"name": "@bojurgess/colorquant",
+	"version": "0.1.0",
+	"exports": {
+		"./bundler": {
+			"import": "./bundler/colorquant.js",
+			"types": "./bundler/colorquant.d.ts"
+		},
+		"./web": {
+			"import": "./web/colorquant.js",
+			"types": "./web/colorquant.d.ts"
+		},
+		"./node": {
+			"import": "./node/colorquant.js",
+			"types": "./node/colorquant.d.ts"
+		}
+	},
+	"files": [
+		"bundler/",
+		"web/",
+		"node/"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bojurgess/colorquant"
+	}
+}
