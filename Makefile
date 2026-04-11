@@ -12,8 +12,8 @@ node:
 	wasm-pack build --target nodejs --out-dir pkg/node
 
 playground: bundler
-	bun install --cwd playground
-	bun --cwd playground dev
+	bun install --cwd web
+	bun --cwd web dev
 
 publish: all
 	npm publish ./pkg --access public

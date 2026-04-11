@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "solid-js": "^1.9.12",
-	"@bojurgess/colorquant": "file:../pkg"
+    "@bojurgess/colorquant": "file:../pkg"
   },
   "devDependencies": {
     "@types/node": "^24.12.2",
     "typescript": "~6.0.2",
     "vite": "^8.0.4",
-    "vite-plugin-solid": "^2.11.12"
+    "vite-plugin-solid": "^2.11.12",
+    "vite-plugin-wasm": "^3.6.0"
   }
 }

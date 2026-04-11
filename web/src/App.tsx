@@ -1,102 +1,62 @@
-import { createSignal } from 'solid-js'
-import solidLogo from './assets/solid.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { createSignal, createResource } from "solid-js";
+import "./App.css";
+import { extractPalette } from "@bojurgess/colorquant/bundler";
 
 function App() {
-  const [count, setCount] = createSignal(0)
+    const [testImageURL, setTestImageURL] = createSignal(
+        "https://i.scdn.co/image/ab67616d00001e02f1dd69d7399290cc25324706",
+    );
 
-  return (
-    <>
-      <section id="center">
-        <div class="hero">
-          <img src={heroImg} class="base" width="170" height="179" alt="" />
-          <img src={solidLogo} class="framework" alt="Solid logo" />
-          <img src={viteLogo} class="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button class="counter" onClick={() => setCount((count) => count + 1)}>
-          Count is {count()}
-        </button>
-      </section>
+    const fetchPalette = async (url) => {
+        const bytes = await fetch(url).then((r) => r.arrayBuffer());
+        return extractPalette(new Uint8Array(bytes));
+    };
 
-      <div class="ticks"></div>
+    const [palette] = createResource(testImageURL, fetchPalette);
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg class="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img class="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://solidjs.com/" target="_blank">
-                <img class="button-icon" src={solidLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+    return (
+        <div
+            style={{
+                display: "flex",
+                "flex-direction": "column",
+                "justify-content": "center",
+                "align-content": "center",
+                gap: "0.5rem",
+            }}
+        >
+            <img
+                src={testImageURL()}
+                style={{
+                    width: "256px",
+                    height: "256px",
+                    "border-radius": "10px",
+                }}
+            />
+            <div style={{ display: "flex", gap: "10px" }}>
+                {palette() &&
+                    Object.entries(palette()).map(([name, color]) => (
+                        <div style={{ "text-align": "center" }}>
+                            <div
+                                style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    "border-radius": "10px",
+                                    "background-color": `rgb(${color.r}, ${color.g}, ${color.b})`,
+                                }}
+                            />
+                            <div
+                                style={{
+                                    "font-size": "12px",
+                                    "margin-top": "4px",
+                                }}
+                            >
+                                {name}
+                            </div>
+                        </div>
+                    ))}
+            </div>
         </div>
-        <div id="social">
-          <svg class="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div class="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    );
 }
 
-export default App
+export default App;
