@@ -1,5 +1,6 @@
+use image::{ImageReader, Rgb};
 use serde::{Deserialize, Serialize};
-use std::ops::Index;
+use std::{io::Cursor, ops::Index};
 use tsify::Tsify;
 
 #[derive(Debug, Serialize, Deserialize, Tsify, Clone)]
@@ -9,6 +10,12 @@ pub struct Colour {
     pub r: u8,
     pub g: u8,
     pub b: u8,
+}
+
+impl From<&Rgb<u8>> for Colour {
+    fn from(value: &Rgb<u8>) -> Self {
+        Self::new(value[0], value[1], value[2])
+    }
 }
 
 impl Index<usize> for Colour {
@@ -39,5 +46,15 @@ impl Colour {
 }
 
 pub fn decode(data: &[u8]) -> Result<Vec<Colour>, image::ImageError> {
-    todo!()
+    let img = ImageReader::new(Cursor::new(data))
+        .with_guessed_format()?
+        .decode()?;
+
+    let rgb: Vec<Colour> = img
+        .into_rgb8()
+        .pixels()
+        .map(|p| Colour::new(p[0], p[1], p[2]))
+        .collect();
+
+    Ok(rgb)
 }
