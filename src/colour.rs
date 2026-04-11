@@ -2,6 +2,7 @@ use image::{ImageReader, Rgb};
 use serde::{Deserialize, Serialize};
 use std::{io::Cursor, ops::Index};
 use tsify::Tsify;
+use wasm_bindgen::JsError;
 
 #[derive(Debug, Serialize, Deserialize, Tsify, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -37,11 +38,33 @@ impl Colour {
     }
 
     pub fn to_hsl(&self) -> (f32, f32, f32) {
-        todo!()
-    }
+        let r = self.r as f32 / 255.0;
+        let g = self.g as f32 / 255.0;
+        let b = self.b as f32 / 255.0;
 
-    pub fn luminance(&self) -> f32 {
-        todo!()
+        let max = r.max(g).max(b);
+        let min = r.min(g).min(b);
+        let delta = max - min;
+
+        let l = (max + min) / 2.0;
+
+        let s = if delta == 0.0 {
+            0.0
+        } else {
+            delta / (1.0 - (2.0 * l - 1.0).abs())
+        };
+
+        let h = if delta == 0.0 {
+            0.0
+        } else if max == r {
+            60.0 * (((g - b) / delta) % 6.0)
+        } else if max == g {
+            60.0 * ((b - r) / delta + 2.0)
+        } else {
+            60.0 * ((r - g) / delta + 4.0)
+        };
+
+        ((h + 360.0) % 360.0, s, l)
     }
 }
 
@@ -57,4 +80,16 @@ pub fn decode(data: &[u8]) -> Result<Vec<Colour>, image::ImageError> {
         .collect();
 
     Ok(rgb)
+}
+
+pub fn from_rgba(data: &[u8]) -> Result<Vec<Colour>, JsError> {
+    if data.len() % 4 != 0 {
+        return Err(JsError::new("RGBA data length must be a multiple of 4"));
+    }
+
+    Ok(data
+        .chunks_exact(4)
+        .filter(|px| px[3] > 128)
+        .map(|px| Colour::new(px[0], px[1], px[2]))
+        .collect())
 }
