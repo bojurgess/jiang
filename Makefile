@@ -1,17 +1,21 @@
-.PHONY: all bundler web node playground publish publish-dry clean
+.PHONY: all bundler web node build_dev playground publish publish-dry clean
 
-all: bundler web node
+all: clean bundler web node
+	bash scripts/cleanup.sh
 
 bundler:
-	wasm-pack build --target bundler --out-dir pkg/bundler
+	wasm-pack build --target bundler --scope bojurgess --out-dir pkg/bundler
 
 web:
-	wasm-pack build --target web --out-dir pkg/web
+	wasm-pack build --target web --scope bojurgess --out-dir pkg/web
 
 node:
-	wasm-pack build --target nodejs --out-dir pkg/node
+	wasm-pack build --target nodejs --scope bojurgess --out-dir pkg/node
 
-playground: bundler
+build_dev: clean
+	wasm-pack build --target bundler --dev --scope bojurgess --out-dir pkg/bundler
+
+playground: build_dev
 	bun install --cwd web
 	bun --cwd web dev
 
@@ -22,4 +26,4 @@ publish-dry: all
 	npm publish ./pkg --access public --dry-run
 
 clean:
-	rm -rf pkg/bundler pkg/web pkg/node⏎      
+	rm -rf pkg/bundler pkg/web pkg/node

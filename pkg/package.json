@@ -1,27 +1,33 @@
 {
-	"name": "@bojurgess/colorquant",
-	"version": "0.1.0",
-	"exports": {
-		"./bundler": {
-			"import": "./bundler/colorquant.js",
-			"types": "./bundler/colorquant.d.ts"
-		},
-		"./web": {
-			"import": "./web/colorquant.js",
-			"types": "./web/colorquant.d.ts"
-		},
-		"./node": {
-			"import": "./node/colorquant.js",
-			"types": "./node/colorquant.d.ts"
-		}
-	},
-	"files": [
-		"bundler/",
-		"web/",
-		"node/"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/bojurgess/colorquant"
-	}
+    "name": "@bojurgess/jiang",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bojurgess/jiang"
+    },
+    "files": [
+        "bundler/",
+        "web/",
+        "node/"
+    ],
+    "main": "./bundler/jiang.js",
+    "types": "./bundler/jiang.d.ts",
+    "exports": {
+        ".": {
+            "import": "./bundler/jiang.js",
+            "types": "./bundler/jiang.d.ts"
+        },
+        "./bundler": {
+            "import": "./bundler/jiang.js",
+            "types": "./bundler/jiang.d.ts"
+        },
+        "./web": {
+            "import": "./web/jiang.js",
+            "types": "./web/jiang.d.ts"
+        },
+        "./node": {
+            "import": "./node/jiang.js",
+            "types": "./node/jiang.d.ts"
+        }
+    }
 }

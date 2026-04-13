@@ -1,7 +1,9 @@
 import { defineConfig } from "vite";
-import solid from "vite-plugin-solid";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import wasm from "vite-plugin-wasm";
+import tailwindcss from "@tailwindcss/vite";
 
+// https://vite.dev/config/
 export default defineConfig({
-    plugins: [wasm(), solid()],
+    plugins: [wasm(), tailwindcss(), svelte()],
 });
