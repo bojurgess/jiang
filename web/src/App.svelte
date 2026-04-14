@@ -4,14 +4,19 @@
 
 	let imageURLs = [
 		`https://i.scdn.co/image/ab67616d00001e02530f41ffd5a9bf22943d1be8`,
-		`https://i.scdn.co/image/ab67616d00001e02dcdd9491f951ab39df5d203f`
+		`https://i.scdn.co/image/ab67616d00001e02dcdd9491f951ab39df5d203f`,
+		`https://i.scdn.co/image/ab67616d00001e02912ac6ffde4f05d2ecd076d2`
 	];
 	let currentImageIndex = $state(0);
 	let imageURL = $derived(imageURLs[currentImageIndex]);
 	let palette = $derived(
 		await fetch(imageURL)
 			.then((res) => res.arrayBuffer())
-			.then((buf) => extractPalette(new Uint8Array(buf)))
+			.then((buf) => extractPalette(new Uint8Array(buf), {
+				algorithm: "medianCut",
+				k: 64,
+				scoringOptions: undefined
+			}))
 	);
 
 	$inspect(palette);
@@ -43,12 +48,12 @@
 	    animId = requestAnimationFrame(tick);
 	    document.addEventListener('visibilitychange', onVisibility);
 	});
-	
+
 	onDestroy(() => {
 	    if (animId) cancelAnimationFrame(animId);
 	    document.removeEventListener('visibilitychange', onVisibility);
 	});
-	
+
 	function onVisibility() {
 	    if (document.visibilityState === 'visible') lastTime = null;
 	}
