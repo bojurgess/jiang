@@ -68,12 +68,21 @@ impl Color {
 }
 
 pub fn from_rgba(data: &[u8]) -> Result<Vec<Color>, JsError> {
+    if data.is_empty() {
+        return Err(JsError::new("RGBA data must not be empty"));
+    }
     if data.len() % 4 != 0 {
         return Err(JsError::new("RGBA data length must be a multiple of 4"));
     }
-    Ok(data
+    let colors: Vec<Color> = data
         .chunks_exact(4)
         .filter(|px| px[3] > 128)
         .map(|px| Color::new(px[0], px[1], px[2]))
-        .collect())
+        .collect();
+
+    if colors.is_empty() {
+        return Err(JsError::new("No opaque pixels found in RGBA data"));
+    }
+
+    Ok(colors)
 }
