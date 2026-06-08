@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::color::Color;
 
 pub enum Algorithm {
@@ -87,6 +89,7 @@ pub mod median_cut {
 pub mod octree {
     use crate::color::Color;
 
+    #[allow(unused_variables)]
     pub fn quantize(pixels: &[Color], k: usize) -> Vec<(Color, u32)> {
         todo!()
     }

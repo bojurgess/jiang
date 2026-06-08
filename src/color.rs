@@ -1,6 +1,4 @@
-use std::{io::Cursor, ops::Index};
-
-use image::{ImageReader, Rgb};
+use std::ops::Index;
 use wasm_bindgen::JsError;
 
 #[derive(Debug, Clone)]
@@ -8,12 +6,6 @@ pub struct Color {
     pub r: u8,
     pub g: u8,
     pub b: u8,
-}
-
-impl From<&Rgb<u8>> for Color {
-    fn from(value: &Rgb<u8>) -> Self {
-        Self::new(value[0], value[1], value[2])
-    }
 }
 
 impl Index<usize> for Color {
@@ -73,13 +65,6 @@ impl Color {
         }
         0.2126 * channel(self.r) + 0.7152 * channel(self.g) + 0.0722 * channel(self.b)
     }
-}
-
-pub fn decode(data: &[u8]) -> Result<Vec<Color>, image::ImageError> {
-    let img = ImageReader::new(Cursor::new(data))
-        .with_guessed_format()?
-        .decode()?;
-    Ok(img.into_rgb8().pixels().map(|p| Color::from(p)).collect())
 }
 
 pub fn from_rgba(data: &[u8]) -> Result<Vec<Color>, JsError> {

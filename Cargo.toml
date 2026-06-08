@@ -1,6 +1,6 @@
 [package]
 name = "jiang"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Joe Burgess <bojurgess@gmail.com>"]
 edition = "2024"
 description = "A colour quantisation library"
@@ -21,10 +21,13 @@ wasm-bindgen = "0.2.84"
 # all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
-image = { version = "0.25.10", default-features = false, features = ["jpeg", "png", "webp"] }
+zune-jpeg = "0.5.15"
+minipng = "1.0.0"
+image-webp = "0.2.4"
 serde = { version = "1.0.228", features = ["derive"] }
 tsify = { version = "0.5.6", features = ["js"] }
 serde-wasm-bindgen = "0.6.5"
+thiserror = "2.0.18"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"

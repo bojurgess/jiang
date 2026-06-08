@@ -1,10 +1,11 @@
 mod color;
+mod decode;
 mod palette;
 mod quantize;
 mod swatch;
 mod utils;
 
-use crate::{palette::Palette, quantize::Algorithm, utils::set_panic_hook};
+use crate::{decode::decode, palette::Palette, quantize::Algorithm, utils::set_panic_hook};
 use wasm_bindgen::prelude::*;
 
 /// Options for extractPalette. All fields are optional.
@@ -17,8 +18,8 @@ pub struct ExtractOptions {
 #[wasm_bindgen(js_name = extractPalette)]
 pub fn extract_palette(data: &[u8], k: Option<u32>) -> Result<Palette, JsError> {
     set_panic_hook();
-    let k = k.unwrap_or(5) as usize;
-    let pixels = color::decode(data)?;
+    let k: usize = k.unwrap_or(5) as usize;
+    let pixels = color::from_rgba(&decode(data)?)?;
     let candidates = quantize::quantize(&pixels, Algorithm::MedianCut, k);
     Ok(palette::score(&candidates))
 }
