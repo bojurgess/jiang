@@ -90,3 +90,34 @@ pub fn decode(data: &[u8]) -> Result<Vec<u8>, DecodeError> {
         ImageFormat::Webp => decode_webp(data),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_guess_format_jpeg() {
+        assert!(matches!(
+            guess_format(&[0xFF, 0xD8, 0xFF, 0x00]),
+            Some(ImageFormat::Jpeg)
+        ))
+    }
+
+    #[test]
+    fn test_guess_format_png() {
+        assert!(matches!(
+            guess_format(&[0x89, b'P', b'N', b'G']),
+            Some(ImageFormat::Png)
+        ))
+    }
+
+    #[test]
+    fn test_guess_format_webp() {
+        assert!(matches!(
+            guess_format(&[
+                b'R', b'I', b'F', b'F', 0x00, 0x00, 0x00, 0x00, b'W', b'E', b'B', b'P'
+            ]),
+            Some(ImageFormat::Webp)
+        ))
+    }
+}
