@@ -17,7 +17,7 @@ build_dev: clean
 
 playground: build_dev
 	bun install --cwd web
-	bun --cwd web dev
+	bun --cwd web dev --host
 
 publish: all
 	npm publish ./pkg --access public

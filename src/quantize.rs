@@ -1,8 +1,22 @@
-pub mod median_cut {
-    use crate::colour::Colour;
+use crate::color::Color;
 
-    pub fn quantize(pixels: &[Colour], k: usize) -> Vec<Colour> {
-        let mut buckets: Vec<Vec<Colour>> = vec![pixels.to_vec()];
+pub enum Algorithm {
+    MedianCut,
+    Octree,
+}
+
+pub fn quantize(pixels: &[Color], algorithm: Algorithm, k: usize) -> Vec<(Color, u32)> {
+    match algorithm {
+        Algorithm::MedianCut => median_cut::quantize(pixels, k),
+        Algorithm::Octree => octree::quantize(pixels, k),
+    }
+}
+
+pub mod median_cut {
+    use crate::color::Color;
+
+    pub fn quantize(pixels: &[Color], k: usize) -> Vec<(Color, u32)> {
+        let mut buckets: Vec<Vec<Color>> = vec![pixels.to_vec()];
         while buckets.len() < k {
             let largest = buckets
                 .iter()
@@ -16,26 +30,28 @@ pub mod median_cut {
             buckets.push(b);
         }
 
-        let mut result: Vec<Colour> = vec![];
-        for bucket in buckets {
-            let result_colour = bucket.iter().fold([0u32; 3], |mut acc, c| {
-                acc[0] += c[0] as u32;
-                acc[1] += c[1] as u32;
-                acc[2] += c[2] as u32;
-                acc
-            });
-            let len = bucket.len() as u32;
-            result.push(Colour::new(
-                (result_colour[0] / len) as u8,
-                (result_colour[1] / len) as u8,
-                (result_colour[2] / len) as u8,
-            ));
-        }
-
-        result
+        buckets
+            .into_iter()
+            .filter(|b| !b.is_empty())
+            .map(|bucket| {
+                let population = bucket.len() as u32;
+                let sum = bucket.iter().fold([0u32; 3], |mut acc, c| {
+                    acc[0] += c.r as u32;
+                    acc[1] += c.g as u32;
+                    acc[2] += c.b as u32;
+                    acc
+                });
+                let colour = Color::new(
+                    (sum[0] / population) as u8,
+                    (sum[1] / population) as u8,
+                    (sum[2] / population) as u8,
+                );
+                (colour, population)
+            })
+            .collect()
     }
 
-    fn cut(mut bucket: Vec<Colour>) -> (Vec<Colour>, Vec<Colour>) {
+    fn cut(mut bucket: Vec<Color>) -> (Vec<Color>, Vec<Color>) {
         let mut channel_mins = [u8::MAX, u8::MAX, u8::MAX];
         let mut channel_maxes = [u8::MIN, u8::MIN, u8::MIN];
 
@@ -69,9 +85,9 @@ pub mod median_cut {
 }
 
 pub mod octree {
-    use crate::colour::Colour;
+    use crate::color::Color;
 
-    pub fn quantize(pixels: &[Colour], k: usize) -> Vec<Colour> {
+    pub fn quantize(pixels: &[Color], k: usize) -> Vec<(Color, u32)> {
         todo!()
     }
 }
