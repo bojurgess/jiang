@@ -5,12 +5,15 @@ all: clean bundler web node
 
 bundler:
 	wasm-pack build --target bundler --scope bojurgess --out-dir pkg/bundler
+	wasm-opt -Oz -o pkg/bundler/jiang_bg.wasm pkg/bundler/jiang_bg.wasm
 
 web:
 	wasm-pack build --target web --scope bojurgess --out-dir pkg/web
+	wasm-opt -Oz -o pkg/web/jiang_bg.wasm pkg/web/jiang_bg.wasm
 
 node:
 	wasm-pack build --target nodejs --scope bojurgess --out-dir pkg/node
+	wasm-opt -Oz -o pkg/node/jiang_bg.wasm pkg/node/jiang_bg.wasm
 
 build_dev: clean
 	wasm-pack build --target bundler --dev --scope bojurgess --out-dir pkg/bundler
