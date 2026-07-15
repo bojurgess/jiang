@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::rgb::Rgb;
 use serde::{Deserialize, Serialize};
 use tsify::Tsify;
 
@@ -15,7 +15,7 @@ pub struct Swatch {
 }
 
 impl Swatch {
-    pub fn from_color(colour: &Color, population: u32) -> Self {
+    pub fn from_color(colour: &Rgb, population: u32) -> Self {
         let (h, s, l) = colour.to_hsl();
         let hex = format!("#{:02X}{:02X}{:02X}", colour.r, colour.g, colour.b);
         let title_text_color = wcag_text_color(colour, 4.5);
@@ -32,7 +32,7 @@ impl Swatch {
     }
 }
 
-fn wcag_text_color(bg: &Color, min_ratio: f32) -> String {
+fn wcag_text_color(bg: &Rgb, min_ratio: f32) -> String {
     let bg_lum = bg.relative_luminance();
     let white_ratio = contrast_ratio(1.0, bg_lum);
     let black_ratio = contrast_ratio(0.0, bg_lum);

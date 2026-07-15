@@ -1,14 +1,15 @@
-mod color;
 mod decode;
+mod lab;
 mod palette;
 mod quantize;
+mod rgb;
 mod swatch;
 mod utils;
-
-use crate::{decode::decode, palette::Palette, quantize::Algorithm, utils::set_panic_hook};
+use crate::{
+    decode::decode, lab::Lab, palette::Palette, quantize::Algorithm, utils::set_panic_hook,
+};
 use wasm_bindgen::prelude::*;
 
-/// Options for extractPalette. All fields are optional.
 #[derive(Debug, Default)]
 #[wasm_bindgen]
 pub struct ExtractOptions {
@@ -19,8 +20,9 @@ pub struct ExtractOptions {
 pub fn extract_palette(data: &[u8], k: Option<u32>) -> Result<Palette, JsError> {
     set_panic_hook();
     let k: usize = k.unwrap_or(5) as usize;
-    let pixels = color::from_rgba(&decode(data)?)?;
-    let candidates = quantize::quantize(&pixels, Algorithm::MedianCut, k);
+    let pixels = rgb::from_rgba(&decode(data)?)?;
+    let lab_pixels: Vec<Lab> = pixels.iter().map(|c| Lab::from_srgb(c.clone())).collect();
+    let candidates = quantize::quantize(&lab_pixels, Algorithm::MedianCut, k);
     Ok(palette::score(&candidates))
 }
 
@@ -28,7 +30,8 @@ pub fn extract_palette(data: &[u8], k: Option<u32>) -> Result<Palette, JsError> 
 pub fn extract_palette_from_rgba(rgba: &[u8], k: Option<u32>) -> Result<Palette, JsError> {
     set_panic_hook();
     let k = k.unwrap_or(5) as usize;
-    let pixels = color::from_rgba(rgba)?;
-    let candidates = quantize::quantize(&pixels, Algorithm::MedianCut, k);
+    let pixels = rgb::from_rgba(rgba)?;
+    let lab_pixels: Vec<Lab> = pixels.iter().map(|c| Lab::from_srgb(c.clone())).collect();
+    let candidates = quantize::quantize(&lab_pixels, Algorithm::MedianCut, k);
     Ok(palette::score(&candidates))
 }

@@ -1,4 +1,5 @@
-use crate::color::Color;
+use crate::lab::Lab;
+use crate::rgb::Rgb;
 use crate::swatch::Swatch;
 use serde::{Deserialize, Serialize};
 use tsify::Tsify;
@@ -32,7 +33,12 @@ impl RoleTarget {
     }
 }
 
-pub fn score(candidates: &[(Color, u32)]) -> Palette {
+pub fn score(candidates: &[(Lab, u32)]) -> Palette {
+    let rgb_candidates: Vec<(Rgb, u32)> = candidates
+        .iter()
+        .map(|(lab, pop)| (lab.to_srgb(), *pop))
+        .collect();
+
     let dominant = RoleTarget::new(0.5, 0.5, 0.0, 0.2);
     let accent = RoleTarget::new(1.0, 0.5, 0.35, 0.3);
     let subtle = RoleTarget::new(0.2, 0.5, 0.0, 0.3);
@@ -40,15 +46,15 @@ pub fn score(candidates: &[(Color, u32)]) -> Palette {
     let light = RoleTarget::new(0.4, 0.8, 0.1, 0.6);
 
     Palette {
-        dominant: best_for(candidates, &dominant),
-        accent: best_for(candidates, &accent),
-        subtle: best_for(candidates, &subtle),
-        dark: best_for(candidates, &dark),
-        light: best_for(candidates, &light),
+        dominant: best_for(&rgb_candidates, &dominant),
+        accent: best_for(&rgb_candidates, &accent),
+        subtle: best_for(&rgb_candidates, &subtle),
+        dark: best_for(&rgb_candidates, &dark),
+        light: best_for(&rgb_candidates, &light),
     }
 }
 
-fn best_for(candidates: &[(Color, u32)], role: &RoleTarget) -> Option<Swatch> {
+fn best_for(candidates: &[(Rgb, u32)], role: &RoleTarget) -> Option<Swatch> {
     candidates
         .iter()
         .filter(|(c, _)| {
@@ -63,7 +69,7 @@ fn best_for(candidates: &[(Color, u32)], role: &RoleTarget) -> Option<Swatch> {
         .map(|(colour, population)| Swatch::from_color(colour, *population))
 }
 
-fn score_candidate(c: &Color, target_s: f32, target_l: f32) -> f32 {
+fn score_candidate(c: &Rgb, target_s: f32, target_l: f32) -> f32 {
     let (_, s, l) = c.to_hsl();
     let s_score = 1.0 - (s - target_s).abs();
     let l_score = 1.0 - (l - target_l).abs();
