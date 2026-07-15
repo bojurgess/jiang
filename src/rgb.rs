@@ -2,13 +2,13 @@ use std::ops::Index;
 use wasm_bindgen::JsError;
 
 #[derive(Debug, Clone)]
-pub struct Color {
+pub struct Rgb {
     pub r: u8,
     pub g: u8,
     pub b: u8,
 }
 
-impl Index<usize> for Color {
+impl Index<usize> for Rgb {
     type Output = u8;
     fn index(&self, index: usize) -> &Self::Output {
         match index {
@@ -20,7 +20,7 @@ impl Index<usize> for Color {
     }
 }
 
-impl Color {
+impl Rgb {
     pub fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
     }
@@ -67,17 +67,17 @@ impl Color {
     }
 }
 
-pub fn from_rgba(data: &[u8]) -> Result<Vec<Color>, JsError> {
+pub fn from_rgba(data: &[u8]) -> Result<Vec<Rgb>, JsError> {
     if data.is_empty() {
         return Err(JsError::new("RGBA data must not be empty"));
     }
     if data.len() % 4 != 0 {
         return Err(JsError::new("RGBA data length must be a multiple of 4"));
     }
-    let colors: Vec<Color> = data
+    let colors: Vec<Rgb> = data
         .chunks_exact(4)
         .filter(|px| px[3] > 128)
-        .map(|px| Color::new(px[0], px[1], px[2]))
+        .map(|px| Rgb::new(px[0], px[1], px[2]))
         .collect();
 
     if colors.is_empty() {
