@@ -1,6 +1,6 @@
 [package]
 name = "jiang"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Joe Burgess <bojurgess@gmail.com>"]
 edition = "2024"
 description = "A colour quantisation library"
